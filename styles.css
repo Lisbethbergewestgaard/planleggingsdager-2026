@@ -427,6 +427,103 @@ h2 {
   color: var(--champagne);
 }
 
+.minuke-topp {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.minuke-handlinger {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.knapp {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--champagne);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.knapp:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.knapp:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 2px;
+}
+
+.knapp-lys {
+  background: var(--champagne);
+  color: var(--aubergine);
+  border-color: var(--champagne);
+}
+
+.navneliste {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+  margin: 16px 0 10px;
+}
+
+.navneknapp {
+  appearance: none;
+  display: grid;
+  gap: 2px;
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--strek);
+  background: var(--kort);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.navneknapp:hover {
+  transform: translateY(-1px);
+  border-color: var(--rose);
+}
+
+.navneknapp:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 2px;
+}
+
+.navneknapp.aktiv {
+  border-color: var(--aubergine);
+  background: var(--rose-lys);
+}
+
+.navneknapp-navn {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--aubergine);
+}
+
+.navneknapp-rot {
+  font-size: 12px;
+  color: var(--blekk-svak);
+}
+
+.hint a {
+  color: var(--aubergine);
+  font-weight: 700;
+}
+
+body.modus-personlig .topp h1 {
+  font-size: clamp(22px, 4vw, 28px);
+}
+
 .minuke .eyebrow {
   color: var(--rose);
 }
@@ -441,47 +538,6 @@ h2 {
 
 .minuke .dag {
   border-color: rgba(255, 255, 255, 0.14);
-}
-
-.velger {
-  display: grid;
-  gap: 6px;
-  margin: 0 0 16px;
-}
-
-.velger span {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #c9b4c4;
-}
-
-.velger select {
-  appearance: none;
-  width: 100%;
-  max-width: 320px;
-  padding: 11px 40px 11px 14px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23F3E9D8' d='M1 1l5 5 5-5'/%3E%3C/svg%3E")
-    right 14px center / 12px no-repeat,
-    rgba(255, 255, 255, 0.08);
-  color: var(--champagne);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.velger select:focus-visible {
-  outline: 2px solid var(--rose);
-  outline-offset: 2px;
-}
-
-.velger option {
-  color: var(--blekk);
-  background: #fff;
 }
 
 .taggrad {
@@ -628,5 +684,10 @@ footer {
 
   main {
     padding: 0 20px 72px;
+  }
+
+  .minuke-topp {
+    grid-template-columns: 1fr auto;
+    align-items: start;
   }
 }

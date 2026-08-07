@@ -19,6 +19,7 @@ const teachers = [
 ];
 
 const STORAGE_KEY = "planleggingsdager-2026-larer";
+const VIEW_KEY = "planleggingsdager-2026-visning";
 
 function esc(text) {
   return String(text)
@@ -45,164 +46,6 @@ function tagLabel(rot, slot) {
   return bits.join(" · ");
 }
 
-function buildPersonalWeek(teacher) {
-  const rotations = [];
-  if (teacher.a) rotations.push("A");
-  if (teacher.b) rotations.push("B");
-  if (teacher.c) rotations.push("C");
-
-  const tags = [];
-  const aTag = tagLabel("A", teacher.a);
-  const bTag = tagLabel("B", teacher.b);
-  const cTag = tagLabel("C", teacher.c);
-  if (aTag) tags.push(`<span class="tagg tA">${esc(aTag)}</span>`);
-  if (bTag) tags.push(`<span class="tagg tB">${esc(bTag)}</span>`);
-  if (cTag) tags.push(`<span class="tagg tC">${esc(cTag)}</span>`);
-  tags.push('<span class="tagg tN">Avdeling: Realfag · H201</span>');
-
-  const notes = [];
-  if (teacher.c?.label === "IKO") {
-    notes.push(
-      "Du står som IKO i rotasjon C, ikke som kontaktlærer for en klasse. Sjekk med avdelingsleder om onsdagens «Elev- og oppstartsfokus» 08.15–09.30 gjelder deg, eller om du bare skal på gruppe C 09.30–11.30."
-    );
-  }
-  if (teacher.id === "oyvind") {
-    notes.push("I rotasjon C står bare rom B230 — ingen klasse er oppgitt. Bekreft med ledelsen hva som gjelder for deg onsdag.");
-  }
-
-  const tue = [];
-  const wed = [];
-
-  // Tirsdag: prioriter fellesfagsslots fra egne rotasjoner
-  if (teacher.a) {
-    tue.push(row("08.15–09.30", "Elev- og oppstartsfokus", {
-      list: ["Elevinformasjon", "Oppstart, klassemiljø, klasseregler, første skoleuke"],
-      important: true,
-    }));
-    tue.push(row("09.30–11.30", "Helhetlig opplæring — gruppe A", {
-      text: "Sosial læring, demokrati og medborgerskap",
-      important: true,
-    }));
-  }
-
-  if (teacher.b && !teacher.a) {
-    tue.push(row("08.15–10.30", "Individuell planlegging", {
-      text: "Avdelingstid er for programfagslærere. Som fellesfagslærer: planlegg selv, eller jobb i en annen rotasjon.",
-    }));
-  }
-
-  if (teacher.b) {
-    tue.push(row("10.30–11.30", "KI-plan med Christian", {
-      rooms: ["Auditoriet"],
-      important: true,
-    }));
-  } else if (teacher.a && !teacher.c) {
-    // A-only: KI onsdag
-  } else if (!teacher.a && !teacher.b && teacher.c) {
-    tue.push(row("08.15–11.30", "Individuell planlegging", {
-      text: "Avdelingstid er for programfagslærere. Som fellesfagslærer: planlegg selv, eller jobb i en annen rotasjon.",
-    }));
-  }
-
-  tue.push(row("11.30–12.30", "Lunsj fra kantinen", { lunch: true }));
-
-  if (teacher.c && !teacher.b) {
-    tue.push(row("12.30–13.30", "KI-plan med Christian", {
-      rooms: ["Auditoriet"],
-      important: true,
-    }));
-    tue.push(row("13.30–15.30", "Individuell planlegging", {
-      text: "Avdelingstid er for programfagslærere. Som fellesfagslærer: planlegg selv, eller jobb i en annen rotasjon.",
-    }));
-  }
-
-  if (teacher.b) {
-    tue.push(row("12.30–13.45", "Elev- og oppstartsfokus", {
-      list: ["Elevinformasjon", "Oppstart, klassemiljø, klasseregler"],
-      important: true,
-    }));
-    tue.push(row("13.45–15.30", "Helhetlig opplæring — gruppe B", {
-      text: "Sosial læring, demokrati og medborgerskap",
-      important: true,
-    }));
-  } else if (teacher.a && !teacher.c) {
-    tue.push(row("12.30–15.30", "Individuell planlegging", {
-      text: "Avdelingstid er for programfagslærere. Som fellesfagslærer: planlegg selv, eller jobb i en annen rotasjon.",
-    }));
-  }
-
-  // Onsdag
-  if (teacher.c) {
-    wed.push(row("08.15–09.30", "Elev- og oppstartsfokus", {
-      list: ["Elevinformasjon", "Oppstart, klassemiljø, klasseregler"],
-      important: true,
-    }));
-    wed.push(row("09.30–11.30", "Helhetlig opplæring — gruppe C", {
-      text: "Sosial læring, demokrati og medborgerskap",
-      important: true,
-    }));
-  } else if (teacher.a || teacher.b) {
-    wed.push(row("08.15–10.30", "Individuell planlegging", {
-      text: "Avdelingstid er for programfagslærere. Som fellesfagslærer: planlegg selv, eller jobb i en annen rotasjon.",
-    }));
-    if (teacher.a || (teacher.b && !teacher.c)) {
-      wed.push(row("10.30–11.30", "KI-plan med Christian", {
-        rooms: ["Auditoriet"],
-        important: true,
-      }));
-    }
-  }
-
-  wed.push(row("11.30–12.30", "Lunsj — egen niste", { lunch: true }));
-  wed.push(row("12.30–15.00", "Planlegging", {
-    text: "Individuelt eller i samarbeid. Avtaler gjør dere selv.",
-  }));
-  wed.push(row("15.00–15.30", "Kort samling: Er vi klare til skolestart?", {
-    rooms: ["Realfag: H201"],
-  }));
-
-  const tueEm = rotations.includes("B") && rotations.includes("A")
-    ? "rotasjon A + B"
-    : rotations.includes("B")
-      ? "rotasjon B"
-      : rotations.includes("A")
-        ? "rotasjon A"
-        : rotations.includes("C")
-          ? "rotasjon C"
-          : "";
-
-  const wedEm = rotations.includes("C")
-    ? "rotasjon C"
-    : rotations.length
-      ? `rotasjon ${rotations.join(" + ")}`
-      : "";
-
-  return `
-    <div class="taggrad">${tags.join("")}</div>
-    <div class="dag">
-      <h3>Mandag 10.08 <em>felles for alle</em></h3>
-      ${row("08.15–11.00", "Fellesprogram i auditoriet", {
-        text: "Se «Mandag» under — helt likt for alle rotasjoner.",
-      })}
-      ${row("12.30–15.30", "Avdeling: Realfag og KK", { rooms: ["H201"] })}
-    </div>
-    <div class="dag">
-      <h3>Tirsdag 11.08 <em>${esc(tueEm)}</em></h3>
-      ${tue.join("")}
-    </div>
-    <div class="dag">
-      <h3>Onsdag 12.08 <em>${esc(wedEm)}</em></h3>
-      ${wed.join("")}
-    </div>
-    ${notes
-      .map(
-        (n) =>
-          `<div class="notat"><b>Å avklare:</b> ${esc(n)}</div>`
-      )
-      .join("")}
-  `;
-}
-
 function row(tid, title, opts = {}) {
   const classes = ["rad"];
   if (opts.important) classes.push("viktig");
@@ -221,6 +64,240 @@ function row(tid, title, opts = {}) {
   return `<div class="${classes.join(" ")}"><div class="tid">${esc(tid)}</div><div class="hva">${body}</div></div>`;
 }
 
+function mondayRows() {
+  return [
+    row("08.15–09.15", "Line Marie og Jon sin time", {
+      text: "Audun sitt kvarter — brannplan",
+      rooms: ["Auditoriet"],
+      important: true,
+    }),
+    row("09.15–09.30", "Pause", { pause: true }),
+    row("09.30–09.55", "For pedagogisk personell", {
+      list: ["Kontaktlærerperm (Ut-B)", "Helhetlig opplæring — startskudd"],
+      important: true,
+    }),
+    row("10.00–11.00", "Elevdemokrati / klassens time (Ut-C)", { important: true }),
+    row("11.30–12.30", "Lunsj — egen niste", { lunch: true }),
+    row("12.30–13.00", "Oppstart avdeling", {
+      rooms: ["Realfag og KK: H201"],
+      important: true,
+    }),
+    row("13.00–14.00", "Individuell tid", {
+      list: [
+        "Orienter deg i timeplanen",
+        "Hvem skal du samarbeide med i år?",
+        "Ta med spørsmål til møtet kl. 14.15",
+      ],
+    }),
+    row("14.15–15.30", "Avdelingsmøte", {
+      list: [
+        "Ønsker til samarbeid og puljestruktur",
+        "Mandagsmøteplan",
+        "Samtalestruktur elev-/fagsamtale",
+        "Enkeltvedtak og IOP skal skrives i VIS",
+      ],
+      rooms: ["H201"],
+      important: true,
+    }),
+  ].join("");
+}
+
+function tuesdayRows(teacher) {
+  const rows = [];
+
+  if (teacher.a) {
+    rows.push(
+      row("08.15–09.30", "Elev- og oppstartsfokus", {
+        list: ["Elevinformasjon", "Oppstart, klassemiljø, klasseregler, første skoleuke"],
+        important: true,
+      }),
+      row("09.30–11.30", "Helhetlig opplæring — gruppe A", {
+        text: "Sosial læring, demokrati og medborgerskap",
+        important: true,
+      })
+    );
+  }
+
+  if (teacher.b && !teacher.a) {
+    rows.push(
+      row("08.15–10.30", "Individuell planlegging", {
+        text: "Avdelingstid er for programfagslærere. Du planlegger selv, eller jobber i en annen rotasjon.",
+      })
+    );
+  }
+
+  if (teacher.b) {
+    rows.push(
+      row("10.30–11.30", "KI-plan med Christian", {
+        rooms: ["Auditoriet"],
+        important: true,
+      })
+    );
+  } else if (!teacher.a && teacher.c) {
+    rows.push(
+      row("08.15–11.30", "Individuell planlegging", {
+        text: "Avdelingstid er for programfagslærere. Du planlegger selv, eller jobber i en annen rotasjon.",
+      })
+    );
+  }
+
+  rows.push(row("11.30–12.30", "Lunsj fra kantinen", { lunch: true }));
+
+  if (teacher.b) {
+    rows.push(
+      row("12.30–13.45", "Elev- og oppstartsfokus", {
+        list: ["Elevinformasjon", "Oppstart, klassemiljø, klasseregler"],
+        important: true,
+      }),
+      row("13.45–15.30", "Helhetlig opplæring — gruppe B", {
+        text: "Sosial læring, demokrati og medborgerskap",
+        important: true,
+      })
+    );
+  } else if (teacher.c) {
+    rows.push(
+      row("12.30–13.30", "KI-plan med Christian", {
+        rooms: ["Auditoriet"],
+        important: true,
+      }),
+      row("13.30–15.30", "Individuell planlegging", {
+        text: "Avdelingstid er for programfagslærere. Du planlegger selv, eller jobber i en annen rotasjon.",
+      })
+    );
+  } else if (teacher.a) {
+    rows.push(
+      row("12.30–15.30", "Individuell planlegging", {
+        text: "Avdelingstid er for programfagslærere. Du planlegger selv, eller jobber i en annen rotasjon.",
+      })
+    );
+  }
+
+  return rows.join("");
+}
+
+function wednesdayRows(teacher) {
+  const rows = [];
+
+  if (teacher.c) {
+    rows.push(
+      row("08.15–09.30", "Elev- og oppstartsfokus", {
+        list: ["Elevinformasjon", "Oppstart, klassemiljø, klasseregler"],
+        important: true,
+      }),
+      row("09.30–11.30", "Helhetlig opplæring — gruppe C", {
+        text: "Sosial læring, demokrati og medborgerskap",
+        important: true,
+      })
+    );
+  } else if (teacher.a || teacher.b) {
+    rows.push(
+      row("08.15–10.30", "Individuell planlegging", {
+        text: "Avdelingstid er for programfagslærere. Du planlegger selv, eller jobber i en annen rotasjon.",
+      })
+    );
+    if (teacher.a || teacher.b) {
+      rows.push(
+        row("10.30–11.30", "KI-plan med Christian", {
+          rooms: ["Auditoriet"],
+          important: true,
+        })
+      );
+    }
+  }
+
+  rows.push(
+    row("11.30–12.30", "Lunsj — egen niste", { lunch: true }),
+    row("12.30–15.00", "Planlegging", {
+      text: "Individuelt eller i samarbeid. Avtaler gjør dere selv.",
+    }),
+    row("15.00–15.30", "Kort samling: Er vi klare til skolestart?", {
+      rooms: ["Realfag: H201"],
+      important: true,
+    })
+  );
+
+  return rows.join("");
+}
+
+function dayEm(teacher, day) {
+  const rotations = [];
+  if (teacher.a) rotations.push("A");
+  if (teacher.b) rotations.push("B");
+  if (teacher.c) rotations.push("C");
+
+  if (day === "tue") {
+    if (teacher.a && teacher.b) return "rotasjon A + B";
+    if (teacher.b) return "rotasjon B";
+    if (teacher.a) return "rotasjon A";
+    if (teacher.c) return "rotasjon C";
+  }
+  if (day === "wed") {
+    if (teacher.c) return "rotasjon C";
+    if (rotations.length) return `rotasjon ${rotations.join(" + ")}`;
+  }
+  return "";
+}
+
+function buildPersonalWeek(teacher) {
+  const tags = [];
+  const aTag = tagLabel("A", teacher.a);
+  const bTag = tagLabel("B", teacher.b);
+  const cTag = tagLabel("C", teacher.c);
+  if (aTag) tags.push(`<span class="tagg tA">${esc(aTag)}</span>`);
+  if (bTag) tags.push(`<span class="tagg tB">${esc(bTag)}</span>`);
+  if (cTag) tags.push(`<span class="tagg tC">${esc(cTag)}</span>`);
+  tags.push('<span class="tagg tN">Avdeling: Realfag · H201</span>');
+
+  const notes = [];
+  if (teacher.c?.label === "IKO") {
+    notes.push(
+      "Du står som IKO i rotasjon C, ikke som kontaktlærer for en klasse. Sjekk med avdelingsleder om onsdagens «Elev- og oppstartsfokus» 08.15–09.30 gjelder deg, eller om du bare skal på gruppe C 09.30–11.30."
+    );
+  }
+  if (teacher.id === "oyvind") {
+    notes.push(
+      "I rotasjon C står bare rom B230 — ingen klasse er oppgitt. Bekreft med ledelsen hva som gjelder for deg onsdag."
+    );
+  }
+
+  return `
+    <div class="taggrad">${tags.join("")}</div>
+    <div class="dag">
+      <h3>Mandag 10. august <em>felles for alle</em></h3>
+      ${mondayRows()}
+    </div>
+    <div class="dag">
+      <h3>Tirsdag 11. august <em>${esc(dayEm(teacher, "tue"))}</em></h3>
+      ${tuesdayRows(teacher)}
+    </div>
+    <div class="dag">
+      <h3>Onsdag 12. august <em>${esc(dayEm(teacher, "wed"))}</em></h3>
+      ${wednesdayRows(teacher)}
+    </div>
+    ${notes.map((n) => `<div class="notat"><b>Å avklare:</b> ${esc(n)}</div>`).join("")}
+  `;
+}
+
+function renderNameList(activeId) {
+  const list = document.getElementById("navneliste");
+  list.innerHTML = teachers
+    .map((t) => {
+      const active = t.id === activeId ? " aktiv" : "";
+      const rots = [
+        t.a ? "A" : null,
+        t.b ? "B" : null,
+        t.c ? "C" : null,
+      ]
+        .filter(Boolean)
+        .join(" · ");
+      return `<button type="button" class="navneknapp${active}" data-id="${t.id}">
+        <span class="navneknapp-navn">${esc(t.name)}</span>
+        <span class="navneknapp-rot">Rotasjon ${esc(rots)}</span>
+      </button>`;
+    })
+    .join("");
+}
+
 function renderTable(activeId) {
   const tbody = document.getElementById("larertabell");
   tbody.innerHTML = teachers
@@ -236,35 +313,99 @@ function renderTable(activeId) {
     .join("");
 }
 
-function renderWeek(teacherId) {
+function showPersonal(teacherId) {
   const teacher = teachers.find((t) => t.id === teacherId) || teachers[0];
-  const select = document.getElementById("larer-velger");
-  select.value = teacher.id;
+  document.body.classList.add("modus-personlig");
+  document.body.classList.remove("modus-oversikt");
+
+  document.getElementById("start").hidden = true;
+  document.getElementById("felles-oversikt").hidden = true;
+  document.getElementById("minuke").hidden = false;
+
+  document.getElementById("minuke-eyebrow").textContent = "Din timeplan · 10.–12. august";
+  document.getElementById("minuke-tittel").textContent = teacher.name;
+  document.getElementById("minuke-ingress").textContent =
+    "Bare det som gjelder deg disse tre dagene — basert på rotasjonene du står i.";
   document.getElementById("minuke-innhold").innerHTML = buildPersonalWeek(teacher);
+
+  renderNameList(teacher.id);
   renderTable(teacher.id);
   localStorage.setItem(STORAGE_KEY, teacher.id);
+  localStorage.setItem(VIEW_KEY, "personlig");
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function showPicker() {
+  document.body.classList.remove("modus-personlig", "modus-oversikt");
+  document.getElementById("start").hidden = false;
+  document.getElementById("minuke").hidden = true;
+  document.getElementById("felles-oversikt").hidden = true;
+  renderNameList(localStorage.getItem(STORAGE_KEY));
+  localStorage.setItem(VIEW_KEY, "velg");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function showOverview() {
+  document.body.classList.add("modus-oversikt");
+  document.body.classList.remove("modus-personlig");
+  document.getElementById("start").hidden = false;
+  document.getElementById("minuke").hidden = true;
+  document.getElementById("felles-oversikt").hidden = false;
+  renderNameList(localStorage.getItem(STORAGE_KEY));
+  localStorage.setItem(VIEW_KEY, "oversikt");
+  document.getElementById("mandag").scrollIntoView({ behavior: "smooth" });
 }
 
 function init() {
-  const select = document.getElementById("larer-velger");
-  select.innerHTML = teachers
-    .map((t) => `<option value="${t.id}">${esc(t.name)}</option>`)
-    .join("");
+  renderTable(null);
+  renderNameList(null);
 
-  const saved = localStorage.getItem(STORAGE_KEY);
-  const startId = teachers.some((t) => t.id === saved) ? saved : "lisbeth";
-  renderWeek(startId);
-
-  select.addEventListener("change", () => {
-    renderWeek(select.value);
+  document.getElementById("navneliste").addEventListener("click", (event) => {
+    const btn = event.target.closest("button.navneknapp");
+    if (!btn) return;
+    showPersonal(btn.dataset.id);
   });
 
   document.getElementById("larertabell").addEventListener("click", (event) => {
     const btn = event.target.closest("button.navn");
     if (!btn) return;
-    renderWeek(btn.dataset.id);
-    document.getElementById("minuke").scrollIntoView({ behavior: "smooth" });
+    showPersonal(btn.dataset.id);
   });
+
+  document.getElementById("bytt-larer").addEventListener("click", showPicker);
+  document.getElementById("vis-oversikt").addEventListener("click", showOverview);
+  document.getElementById("apne-oversikt").addEventListener("click", (event) => {
+    event.preventDefault();
+    showOverview();
+  });
+
+  document.getElementById("nav-chips").addEventListener("click", (event) => {
+    const link = event.target.closest("a[data-nav]");
+    if (!link) return;
+    if (link.dataset.nav === "velg") {
+      event.preventDefault();
+      showPicker();
+      return;
+    }
+    if (document.body.classList.contains("modus-personlig")) {
+      event.preventDefault();
+      showOverview();
+      const target = document.querySelector(link.getAttribute("href"));
+      if (target) setTimeout(() => target.scrollIntoView({ behavior: "smooth" }), 50);
+    }
+  });
+
+  const savedView = localStorage.getItem(VIEW_KEY);
+  const savedId = localStorage.getItem(STORAGE_KEY);
+  if (savedView === "personlig" && teachers.some((t) => t.id === savedId)) {
+    showPersonal(savedId);
+  } else if (savedView === "oversikt") {
+    document.getElementById("felles-oversikt").hidden = false;
+    document.body.classList.add("modus-oversikt");
+  } else {
+    document.getElementById("felles-oversikt").hidden = true;
+  }
 }
 
 init();

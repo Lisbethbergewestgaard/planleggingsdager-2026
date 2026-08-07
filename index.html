@@ -19,14 +19,14 @@
 </header>
 
 <nav aria-label="Hopp til seksjon">
-  <div class="chips">
-    <a class="chip min" href="#minuke">Min uke</a>
-    <a class="chip" href="#mandag">Mandag (felles)</a>
-    <a class="chip ca" href="#rotA">Rotasjon A</a>
-    <a class="chip cb" href="#rotB">Rotasjon B</a>
-    <a class="chip cc" href="#rotC">Rotasjon C</a>
-    <a class="chip" href="#larere">Lærerliste</a>
-    <a class="chip" href="#rom">Rom &amp; uklarheter</a>
+  <div class="chips" id="nav-chips">
+    <a class="chip min" href="#start" data-nav="velg">Velg lærer</a>
+    <a class="chip" href="#mandag" data-nav="oversikt">Mandag (felles)</a>
+    <a class="chip ca" href="#rotA" data-nav="oversikt">Rotasjon A</a>
+    <a class="chip cb" href="#rotB" data-nav="oversikt">Rotasjon B</a>
+    <a class="chip cc" href="#rotC" data-nav="oversikt">Rotasjon C</a>
+    <a class="chip" href="#larere" data-nav="oversikt">Lærerliste</a>
+    <a class="chip" href="#rom" data-nav="oversikt">Rom &amp; uklarheter</a>
   </div>
 </nav>
 
@@ -34,6 +34,32 @@
 
 <section id="start">
   <div class="eyebrow">Start her</div>
+  <h2>Hvem er du?</h2>
+  <p class="undertekst">Trykk på navnet ditt. Da får du bare din egen timeplan for mandag, tirsdag og onsdag.</p>
+  <div class="navneliste" id="navneliste" aria-label="Velg lærer"></div>
+  <p class="undertekst hint">Eller se <a href="#mandag" id="apne-oversikt">hele fellesoversikten</a> med alle rotasjoner.</p>
+</section>
+
+<section id="minuke" hidden>
+  <div class="minuke">
+    <div class="minuke-topp">
+      <div>
+        <div class="eyebrow" id="minuke-eyebrow">Din timeplan</div>
+        <h2 id="minuke-tittel">Min uke</h2>
+        <p class="undertekst" id="minuke-ingress">Satt sammen fra rotasjonene du står i.</p>
+      </div>
+      <div class="minuke-handlinger">
+        <button type="button" class="knapp" id="bytt-larer">Bytt person</button>
+        <button type="button" class="knapp knapp-lys" id="vis-oversikt">Hele oversikten</button>
+      </div>
+    </div>
+    <div id="minuke-innhold"></div>
+  </div>
+</section>
+
+<div id="felles-oversikt">
+<section id="rotasjonsnokkel" class="skjult-i-personlig">
+  <div class="eyebrow">Bakgrunn</div>
   <h2>Hvilken rotasjon er du i?</h2>
   <p class="undertekst">Rotasjonen bestemmes av hvilket utdanningsprogram du underviser på. Underviser du på flere, går du i flere rotasjoner — øktene kolliderer ikke.</p>
   <div class="nokkel">
@@ -41,22 +67,7 @@
     <a href="#rotB"><div class="merke mB">B</div><div><b>BA · FD · RM · EL · IM</b><span>Helhetlig opplæring: tirsdag ettermiddag</span></div></a>
     <a href="#rotC"><div class="merke mC">C</div><div><b>HO · MK · TL · AM</b><span>Helhetlig opplæring: onsdag formiddag</span></div></a>
   </div>
-  <div class="notat"><b>Dette er hele poenget med rotasjonene:</b> «Elev og oppstart» og «Helhetlig opplæring» ligger på tre ulike tidspunkt. Har du klasser i to rotasjoner, rekker du begge. Velg navnet ditt under for din personlige uke — eller sjekk lærerlista.</div>
-</section>
-
-<section id="minuke">
-  <div class="minuke">
-    <div class="eyebrow">Personlig oversikt</div>
-    <h2>Min uke</h2>
-    <p class="undertekst">Velg deg selv i lista. Uka bygges automatisk fra rotasjonene du står i.</p>
-
-    <label class="velger" for="larer-velger">
-      <span>Lærer</span>
-      <select id="larer-velger"></select>
-    </label>
-
-    <div id="minuke-innhold"></div>
-  </div>
+  <div class="notat"><b>Dette er hele poenget med rotasjonene:</b> «Elev og oppstart» og «Helhetlig opplæring» ligger på tre ulike tidspunkt. Har du klasser i to rotasjoner, rekker du begge.</div>
 </section>
 
 <section id="mandag">
@@ -199,6 +210,7 @@
     <div class="rad"><div class="tid">4</div><div class="hva"><b>Rotasjon C i lærerlista</b><p>Flere lærere står i den grønne blokken uten oppført klasse.</p></div></div>
   </div>
 </section>
+</div>
 
 <footer>
   Omarbeidet fra «Oversikt planleggingsdager fellesfagslærere — alle tre rotasjoner». Alt innhold fra originalen er beholdt; mandagen står én gang fordi den er lik i alle tre oppsettene.
