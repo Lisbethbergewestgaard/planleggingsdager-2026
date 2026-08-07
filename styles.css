@@ -42,6 +42,11 @@ body.las {
     linear-gradient(180deg, #25122a, #1a0c1e);
 }
 
+.passordport.skjult,
+.skjult {
+  display: none !important;
+}
+
 .passordboks {
   width: min(100%, 400px);
   background: rgba(251, 247, 241, 0.97);
