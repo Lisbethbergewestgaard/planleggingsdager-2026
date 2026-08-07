@@ -131,7 +131,7 @@ body.las {
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 118px;
+  scroll-padding-top: 24px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -263,8 +263,7 @@ main {
 }
 
 section {
-  margin-top: 30px;
-  scroll-margin-top: 118px;
+  margin-top: 28px;
 }
 
 .eyebrow {

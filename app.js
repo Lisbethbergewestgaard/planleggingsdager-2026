@@ -19,7 +19,6 @@ const teachers = [
 ];
 
 const STORAGE_KEY = "planleggingsdager-2026-larer";
-const VIEW_KEY = "planleggingsdager-2026-visning";
 
 function esc(text) {
   return String(text)
@@ -27,15 +26,6 @@ function esc(text) {
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
-}
-
-function cellHtml(slot) {
-  if (!slot) return '<td class="tom">–</td>';
-  const parts = [];
-  if (slot.label) parts.push(esc(slot.label));
-  if (slot.room) parts.push(`<span class="rk">${esc(slot.room)}</span>`);
-  if (!parts.length) return '<td class="tom">–</td>';
-  return `<td>${parts.join(" ")}</td>`;
 }
 
 function tagLabel(rot, slot) {
@@ -193,16 +183,12 @@ function wednesdayRows(teacher) {
     rows.push(
       row("08.15–10.30", "Individuell planlegging", {
         text: "Avdelingstid er for programfagslærere. Du planlegger selv, eller jobber i en annen rotasjon.",
+      }),
+      row("10.30–11.30", "KI-plan med Christian", {
+        rooms: ["Auditoriet"],
+        important: true,
       })
     );
-    if (teacher.a || teacher.b) {
-      rows.push(
-        row("10.30–11.30", "KI-plan med Christian", {
-          rooms: ["Auditoriet"],
-          important: true,
-        })
-      );
-    }
   }
 
   rows.push(
@@ -220,11 +206,6 @@ function wednesdayRows(teacher) {
 }
 
 function dayEm(teacher, day) {
-  const rotations = [];
-  if (teacher.a) rotations.push("A");
-  if (teacher.b) rotations.push("B");
-  if (teacher.c) rotations.push("C");
-
   if (day === "tue") {
     if (teacher.a && teacher.b) return "rotasjon A + B";
     if (teacher.b) return "rotasjon B";
@@ -233,6 +214,9 @@ function dayEm(teacher, day) {
   }
   if (day === "wed") {
     if (teacher.c) return "rotasjon C";
+    const rotations = [];
+    if (teacher.a) rotations.push("A");
+    if (teacher.b) rotations.push("B");
     if (rotations.length) return `rotasjon ${rotations.join(" + ")}`;
   }
   return "";
@@ -251,13 +235,11 @@ function buildPersonalWeek(teacher) {
   const notes = [];
   if (teacher.c?.label === "IKO") {
     notes.push(
-      "Du står som IKO i rotasjon C, ikke som kontaktlærer for en klasse. Sjekk med avdelingsleder om onsdagens «Elev- og oppstartsfokus» 08.15–09.30 gjelder deg, eller om du bare skal på gruppe C 09.30–11.30."
+      "Du står som IKO i rotasjon C. Sjekk med avdelingsleder om onsdagens «Elev- og oppstartsfokus» 08.15–09.30 gjelder deg."
     );
   }
   if (teacher.id === "oyvind") {
-    notes.push(
-      "I rotasjon C står bare rom B230 — ingen klasse er oppgitt. Bekreft med ledelsen hva som gjelder for deg onsdag."
-    );
+    notes.push("I rotasjon C står bare rom B230. Bekreft med ledelsen hva som gjelder for deg onsdag.");
   }
 
   return `
@@ -279,15 +261,10 @@ function buildPersonalWeek(teacher) {
 }
 
 function renderNameList(activeId) {
-  const list = document.getElementById("navneliste");
-  list.innerHTML = teachers
+  document.getElementById("navneliste").innerHTML = teachers
     .map((t) => {
       const active = t.id === activeId ? " aktiv" : "";
-      const rots = [
-        t.a ? "A" : null,
-        t.b ? "B" : null,
-        t.c ? "C" : null,
-      ]
+      const rots = [t.a ? "A" : null, t.b ? "B" : null, t.c ? "C" : null]
         .filter(Boolean)
         .join(" · ");
       return `<button type="button" class="navneknapp${active}" data-id="${t.id}">
@@ -298,67 +275,31 @@ function renderNameList(activeId) {
     .join("");
 }
 
-function renderTable(activeId) {
-  const tbody = document.getElementById("larertabell");
-  tbody.innerHTML = teachers
-    .map((t) => {
-      const meg = t.id === activeId ? ' class="meg"' : "";
-      return `<tr${meg}>
-        <td><button type="button" class="navn" data-id="${t.id}">${esc(t.name)}</button></td>
-        ${cellHtml(t.a)}
-        ${cellHtml(t.b)}
-        ${cellHtml(t.c)}
-      </tr>`;
-    })
-    .join("");
-}
-
 function showPersonal(teacherId) {
   const teacher = teachers.find((t) => t.id === teacherId) || teachers[0];
   document.body.classList.add("modus-personlig");
-  document.body.classList.remove("modus-oversikt");
 
   document.getElementById("start").hidden = true;
-  document.getElementById("felles-oversikt").hidden = true;
   document.getElementById("minuke").hidden = false;
 
-  document.getElementById("minuke-eyebrow").textContent = "Din timeplan · 10.–12. august";
   document.getElementById("minuke-tittel").textContent = teacher.name;
-  document.getElementById("minuke-ingress").textContent =
-    "Bare det som gjelder deg disse tre dagene — basert på rotasjonene du står i.";
   document.getElementById("minuke-innhold").innerHTML = buildPersonalWeek(teacher);
 
   renderNameList(teacher.id);
-  renderTable(teacher.id);
   localStorage.setItem(STORAGE_KEY, teacher.id);
-  localStorage.setItem(VIEW_KEY, "personlig");
-
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function showPicker() {
-  document.body.classList.remove("modus-personlig", "modus-oversikt");
-  document.getElementById("start").hidden = false;
-  document.getElementById("minuke").hidden = true;
-  document.getElementById("felles-oversikt").hidden = true;
-  renderNameList(localStorage.getItem(STORAGE_KEY));
-  localStorage.setItem(VIEW_KEY, "velg");
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function showOverview() {
-  document.body.classList.add("modus-oversikt");
   document.body.classList.remove("modus-personlig");
   document.getElementById("start").hidden = false;
   document.getElementById("minuke").hidden = true;
-  document.getElementById("felles-oversikt").hidden = false;
-  renderNameList(localStorage.getItem(STORAGE_KEY));
-  localStorage.setItem(VIEW_KEY, "oversikt");
-  document.getElementById("mandag").scrollIntoView({ behavior: "smooth" });
+  localStorage.removeItem(STORAGE_KEY);
+  renderNameList(null);
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function init() {
-  renderTable(null);
   renderNameList(null);
 
   document.getElementById("navneliste").addEventListener("click", (event) => {
@@ -367,44 +308,11 @@ function init() {
     showPersonal(btn.dataset.id);
   });
 
-  document.getElementById("larertabell").addEventListener("click", (event) => {
-    const btn = event.target.closest("button.navn");
-    if (!btn) return;
-    showPersonal(btn.dataset.id);
-  });
-
   document.getElementById("bytt-larer").addEventListener("click", showPicker);
-  document.getElementById("vis-oversikt").addEventListener("click", showOverview);
-  document.getElementById("apne-oversikt").addEventListener("click", (event) => {
-    event.preventDefault();
-    showOverview();
-  });
 
-  document.getElementById("nav-chips").addEventListener("click", (event) => {
-    const link = event.target.closest("a[data-nav]");
-    if (!link) return;
-    if (link.dataset.nav === "velg") {
-      event.preventDefault();
-      showPicker();
-      return;
-    }
-    if (document.body.classList.contains("modus-personlig")) {
-      event.preventDefault();
-      showOverview();
-      const target = document.querySelector(link.getAttribute("href"));
-      if (target) setTimeout(() => target.scrollIntoView({ behavior: "smooth" }), 50);
-    }
-  });
-
-  const savedView = localStorage.getItem(VIEW_KEY);
   const savedId = localStorage.getItem(STORAGE_KEY);
-  if (savedView === "personlig" && teachers.some((t) => t.id === savedId)) {
+  if (teachers.some((t) => t.id === savedId)) {
     showPersonal(savedId);
-  } else if (savedView === "oversikt") {
-    document.getElementById("felles-oversikt").hidden = false;
-    document.body.classList.add("modus-oversikt");
-  } else {
-    document.getElementById("felles-oversikt").hidden = true;
   }
 }
 
