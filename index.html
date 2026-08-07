@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=5">
+<link rel="stylesheet" href="styles.css?v=6">
 <style>
   body.las { overflow: hidden; }
   .passordport {
@@ -37,10 +37,10 @@
   <form id="passord-skjema" class="passordboks" autocomplete="off">
     <div class="eyebrow">Sam Eyde · privat</div>
     <h1 id="passord-tittel">Planleggingsdager</h1>
-    <p>Skriv inn passordet: <strong>eyde2026</strong></p>
+    <p>Siden er bare for fellesfagslærere. Skriv inn passordet du har fått.</p>
     <label class="passord-felt" for="passord-input">
       <span>Passord</span>
-      <input id="passord-input" name="passord" type="text" required autofocus autocomplete="off" spellcheck="false">
+      <input id="passord-input" name="passord" type="password" required autofocus autocomplete="current-password" spellcheck="false">
     </label>
     <p id="passord-feil" class="passord-feil" hidden>Feil passord. Prøv igjen.</p>
     <button type="submit" class="passord-knapp">Åpne siden</button>
@@ -85,8 +85,8 @@
 
 <script>
 (function () {
-  var PASSORD = "eyde2026";
-  var KEY = "plan2026auth";
+  var PASSORD = "SamEyde2026";
+  var KEY = "plan2026auth-v2";
   var port = document.getElementById("passordport");
   var side = document.getElementById("sideinnhold");
   var form = document.getElementById("passord-skjema");
@@ -106,7 +106,7 @@
   form.onsubmit = function (e) {
     e.preventDefault();
     feil.hidden = true;
-    var skrevet = (input.value || "").trim().toLowerCase().replace(/\s+/g, "");
+    var skrevet = (input.value || "").trim();
     if (skrevet !== PASSORD) {
       feil.hidden = false;
       input.focus();
@@ -119,6 +119,6 @@
   };
 })();
 </script>
-<script src="app.js?v=5"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>
