@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=6">
+<link rel="stylesheet" href="styles.css?v=9">
 <style>
   body.las { overflow: hidden; }
   .passordport {
@@ -32,6 +32,146 @@
   .passord-felt input { width: 100%; border: 1px solid #e5dacb; border-radius: 10px; padding: 12px 14px; font: inherit; font-size: 16px; }
   .passord-feil { margin: 0 0 12px; color: #8f3f57; font-size: 13px; font-weight: 600; }
   .passord-knapp { width: 100%; border: 0; border-radius: 999px; padding: 12px 16px; background: #3d1f3d; color: #f3e9d8; font: inherit; font-weight: 700; cursor: pointer; }
+</style>
+<style>
+/* ============================================================
+   STILREN OVERSTYRING
+   Limes inn rett før </head> i start.html
+   Endrer kun farger og kontrast. Rører ikke innhold eller lenke.
+   ============================================================ */
+
+:root{
+  --papir:#FAF8F5;
+  --kort:#FFFFFF;
+  --strek:#E4DED6;
+  --blekk:#1F1A1D;
+  --blekk-svak:#6E6570;
+  --aubergine:#3A2038;
+  --aubergine-dyp:#241428;
+  --champagne:#F2EDE6;
+  --champagne-dyp:#E4DDD2;
+  --rose:#A85A74;
+  --rose-lys:#F6F1F3;
+}
+
+/* --- 1. FEILEN: overskrifter i radene var nesten usynlige --- */
+.rad .hva b,
+.dag .hva b,
+.minuke .hva b{
+  color:var(--blekk) !important;
+  font-weight:650;
+  letter-spacing:-.005em;
+}
+
+/* --- 2. Rolige rader: hvitt, tynne skillelinjer, ingen striping --- */
+.rad{
+  background:var(--kort) !important;
+  border-top:1px solid #EFEAE3;
+}
+.rad .hva li,
+.rad .hva p{ color:#4A4147 !important; }
+
+/* Viktig-rad markeres med smal strek, ikke fylt flate */
+.rad.viktig{
+  background:var(--kort) !important;
+  box-shadow:inset 3px 0 0 var(--rose);
+}
+.rad.viktig .tid{ color:var(--rose) !important; }
+
+/* Pause og lunsj tones ned i stedet for å skrike */
+.rad.pause{ background:#FAF8F5 !important; }
+.rad.pause .hva b{ color:var(--blekk-svak) !important; font-weight:500 !important; }
+.rad.lunsj{ background:#F7F4EF !important; }
+.rad.lunsj .hva b{ color:var(--blekk-svak) !important; font-weight:500 !important; }
+
+/* --- 3. Tidskolonnen: rolig, men lesbar --- */
+.tid{
+  color:var(--blekk-svak) !important;
+  font-weight:600;
+}
+
+/* --- 4. Romtagger: kontur i stedet for fyll --- */
+.rom, .rk{
+  background:transparent !important;
+  color:var(--blekk-svak) !important;
+  border:1px solid var(--strek);
+  font-weight:600;
+  letter-spacing:.03em;
+}
+
+/* --- 5. Dagoverskrifter: hvit bunn, aubergine tekst --- */
+.dag{ border-color:var(--strek) !important; }
+.dag > h3{
+  background:var(--kort) !important;
+  color:var(--aubergine) !important;
+  border-bottom:1px solid var(--strek) !important;
+  letter-spacing:.09em;
+}
+.dag > h3 em{ color:var(--blekk-svak) !important; }
+
+/* Rotasjonsfargede kort tones ned til samme rolige uttrykk */
+.rot-a .dag > h3, .rot-b .dag > h3, .rot-c .dag > h3{
+  background:var(--kort) !important;
+  color:var(--aubergine) !important;
+  border-bottom-color:var(--strek) !important;
+}
+.rot-a .dag, .rot-b .dag, .rot-c .dag{ border-color:var(--strek) !important; }
+
+/* --- 6. Personlig blokk: lys i stedet for mørk lilla flate --- */
+.minuke{
+  background:var(--kort) !important;
+  color:var(--blekk) !important;
+  border:1px solid var(--strek);
+}
+.minuke h2{ color:var(--aubergine) !important; }
+.minuke .eyebrow{ color:var(--rose) !important; }
+.minuke .undertekst{ color:var(--blekk-svak) !important; }
+
+/* --- 7. Tagger: kontur, med farge kun i kanten --- */
+.tagg{
+  background:transparent !important;
+  color:var(--blekk) !important;
+  border:1px solid var(--strek);
+  font-weight:600;
+}
+.tagg.tB{ border-color:var(--rose); color:#8A4A60 !important; }
+.tagg.tC{ border-color:#5F7F63; color:#3F5A43 !important; }
+
+/* --- 8. Notater: rolig, ikke rosa boks --- */
+.notat{
+  background:var(--kort) !important;
+  border:1px solid var(--strek) !important;
+  border-left:3px solid var(--rose) !important;
+  color:#4A4147 !important;
+}
+.notat b{ color:var(--aubergine) !important; }
+
+/* --- 9. Merker og chips i navigasjonen --- */
+.merke{ border-radius:8px; }
+.chip.ca, .chip.cb, .chip.cc{
+  border-color:var(--strek) !important;
+  color:var(--aubergine) !important;
+}
+
+/* --- 10. Tabellen --- */
+th{
+  background:var(--champagne) !important;
+  color:var(--aubergine) !important;
+}
+tr.meg td{
+  background:#FBF6F8 !important;
+  color:var(--blekk) !important;
+  box-shadow:inset 3px 0 0 var(--rose);
+}
+
+/* Knapper lesbare når Min uke er lys */
+.minuke .knapp{
+  color:var(--aubergine) !important;
+  background:var(--papir) !important;
+  border-color:var(--strek) !important;
+}
+.minuke .tagg.tA{ border-color:#B08A3E; color:#7A5D22 !important; }
+.minuke .tagg.tN{ color:var(--blekk-svak) !important; }
 </style>
 </head>
 <body class="las">
@@ -122,6 +262,6 @@
   };
 })();
 </script>
-<script src="app.js?v=6"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>
